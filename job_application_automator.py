@@ -1,10 +1,10 @@
 # Project: Job Application Automator
 # File: job_application_automator.py
 # Purpose: Generates and emails personalized cover letters to employers using OpenAI GPT-4o mini API.
-# Dependencies: openai>=0.27, smtplib, kivy, Python 3.10+
+# Dependencies: openai>=1.2.0, smtplib, kivy>=2.3.0, Python 3.10+
 # Author: Emily Au
 
-import openai
+from openai import OpenAI
 
 import kivy
 from kivy.app import App
@@ -17,7 +17,7 @@ import smtplib
 from email.mime.text import MIMEText
 
 # Your OpenAI API key
-openai.api_key = ""
+client = OpenAI(api_key = "")
 
 # SMPT connection
 smtp_server = "smtp.gmail.com"
@@ -34,7 +34,7 @@ subject = "Application for [Job Title] - [Your Name]"
 body = ''
 
 class myApp(GridLayout):
-    # initiation
+    # App initiation
     def __init__(self,**kwargs):
         super(myApp, self).__init__()
         self.cols = 1
@@ -69,24 +69,24 @@ class myApp(GridLayout):
         self.send.bind(on_press = self.email_sent)
         self.add_widget(self.send)
 
-    # if generate response button clicked
+    # Response generation
     def click_me(self, instance):
-        prompt = "Given the following resume: '" + self.userInput1.text + "' and the following job description: '" + self.userInput2.text + "' please generate a customized cover letter."
+        prompt = "Given the following resume: '" + self.userInput1.text + "' and the following job description: '" + self.userInput2.text + "' please generate a customized cover letter without any formatting, empty lines, or special characters."
         
         self.response.text = 'Generating response ...'
         
         # generate response with OpenAI GPT model of your choice
-        completion = openai.ChatCompletion.create(model="gpt-4o-mini", messages=[{"role": "user", "content": prompt}])
+        completion = client.chat.completions.create(model="gpt-4o-mini", messages=[{"role": "user", "content": prompt}])
         print(completion.choices[0].message.content)
 
         # response label
-        self.response.text = 'Your response has been generated and printed in the terminal. Please press the buttom if you would like to receive this response via email'
+        self.response.text = 'The full cover letter has been generated and printed in the terminal. Here is a snippet:\n' + (completion.choices[0].message.content)[:400] + '...'
 
         # create email
         global body
         body = completion.choices[0].message.content
 
-    # if send email button clicked
+    # Sending email to desired recipient
     def email_sent (self, instance):
         print("button clicked: " + body)
 
@@ -105,7 +105,7 @@ class myApp(GridLayout):
             except Exception as e:
                 print(f"Error: {e}")
         else:
-            print("please generate a prompt before pressing")
+            print("Please generate a cover letter")
 
 
 class JobApplicationAutomatorApp(App):
