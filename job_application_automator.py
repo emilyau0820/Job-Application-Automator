@@ -34,13 +34,13 @@ subject = "Application for [Job Title] - [Your Name]"
 body = ''
 
 class myApp(GridLayout):
-    # App initiation
+    # initiation
     def __init__(self,**kwargs):
         super(myApp, self).__init__()
         self.cols = 1
 
         # prompt label 1
-        self.prompt1 = Label(text = 'Please paste your resume in the textbox below', font_size = '50', size_hint = (1, 0.5))
+        self.prompt1 = Label(text = 'Resume Below', font_size = '50', size_hint = (1, 0.5))
         self.add_widget(self.prompt1)
 
         # text box 1
@@ -48,7 +48,7 @@ class myApp(GridLayout):
         self.add_widget(self.userInput1)
 
         # prompt label 2
-        self.prompt2 = Label(text = 'Please paste the job description in the textbox below', font_size = '50', size_hint = (1, 0.5))
+        self.prompt2 = Label(text = 'Job Description Below', font_size = '50', size_hint = (1, 0.5))
         self.add_widget(self.prompt2)
 
         # text box 2
@@ -61,13 +61,20 @@ class myApp(GridLayout):
         self.add_widget(self.press)
 
         # temporary response label
-        self.response = Label(text = '', text_size = (2000, None), size_hint = (1, 2))
+        self.response = Label(text = '', text_size = (2000, None), size_hint = (1, 1.5), halign = 'center')
+        self.response.bind(width=self.update_response_text_size)
         self.add_widget(self.response)
 
         # generate email send button
         self.send = Button(text = 'Click Here to Send Email', size_hint = (1, 0.5))
         self.send.bind(on_press = self.email_sent)
         self.add_widget(self.send)
+
+    # dynamic text adjustment
+    def update_response_text_size(self, instance, value):
+        instance.text_size = (value, None)
+        instance.texture_update()
+        instance.height = instance.texture_size[1]
 
     # Response generation
     def click_me(self, instance):
@@ -82,7 +89,7 @@ class myApp(GridLayout):
         # response label
         self.response.text = 'The full cover letter has been generated and printed in the terminal. Here is a snippet:\n' + (completion.choices[0].message.content)[:400] + '...'
 
-        # create email
+        # creating email
         global body
         body = completion.choices[0].message.content
 
