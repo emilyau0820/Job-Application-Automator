@@ -83,7 +83,7 @@ class myApp(GridLayout):
         self.response.text = 'Generating response ...'
         
         # generate response with OpenAI GPT model of your choice
-        completion = client.chat.completions.create(model="gpt-4o-mini", messages=[{"role": "user", "content": prompt}])
+        completion = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
         print(completion.choices[0].message.content)
 
         # response label
