@@ -17,7 +17,7 @@ import smtplib
 from email.mime.text import MIMEText
 
 # Your OpenAI API key
-client = OpenAI(api_key = "")
+client = OpenAI(api_key = "", timeout = 600)
 
 # SMPT connection
 smtp_server = "smtp.gmail.com"
